@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>坑查查 · 原型设计图 V2.0</title>
+<style>
+  :root{
+    --ink:#0F172A; --ink2:#475569; --muted:#94A3B8; --line:#E6EBF1; --bg:#F4F7FA;
+    --brand:#0E9E8E; --brand-d:#0B6E6B; --radar:#16D6B4;
+    --g:#22C55E; --a:#F59E0B; --r:#EF4444;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    color:#E2E8F0; line-height:1.5;
+    background:#080C16;
+    background-image:
+      radial-gradient(1200px 700px at 80% -10%, rgba(22,214,180,.10), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(14,158,142,.10), transparent 60%);
+    padding:48px 24px 80px;
+  }
+  .wrap{max-width:1280px;margin:0 auto}
+
+  /* ---------- page header ---------- */
+  .top{display:flex;align-items:center;gap:18px;margin-bottom:10px}
+  .logo{width:54px;height:54px;flex:0 0 auto}
+  .top h1{font-size:30px;font-weight:800;color:#fff;letter-spacing:.5px}
+  .top h1 small{display:block;font-size:13px;font-weight:500;color:#7E8CA0;letter-spacing:2px;margin-top:3px}
+  .lead{max-width:760px;color:#9AA7B8;font-size:14px;margin:14px 0 26px}
+  .lead b{color:#CBD5E1}
+
+  /* ---------- design tokens strip ---------- */
+  .tokens{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
+  .tok{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;
+       padding:10px 14px;display:flex;align-items:center;gap:9px;font-size:12.5px;color:#AEB9C8}
+  .sw{width:16px;height:16px;border-radius:5px;flex:0 0 auto}
+
+  /* ---------- section ---------- */
+  .sec-title{display:flex;align-items:center;gap:12px;margin:14px 0 22px}
+  .sec-title .bar{width:4px;height:22px;border-radius:3px;background:linear-gradient(var(--radar),var(--brand))}
+  .sec-title h2{color:#fff;font-size:20px;font-weight:700}
+  .sec-title span{color:#6B7890;font-size:13px}
+
+  /* ---------- phone gallery ---------- */
+  .gallery{display:flex;flex-wrap:wrap;gap:34px;margin-bottom:54px}
+  .device{width:328px}
+  .cap{margin-top:14px;text-align:center}
+  .cap b{display:block;color:#E2E8F0;font-size:14.5px;font-weight:650}
+  .cap span{color:#6B7890;font-size:12px}
+
+  .phone{width:328px;background:#0C1322;border-radius:42px;padding:12px;
+         box-shadow:0 30px 60px -20px rgba(0,0,0,.7), inset 0 0 0 1.5px rgba(255,255,255,.06)}
+  .screen{position:relative;height:680px;background:var(--bg);border-radius:32px;overflow:hidden;display:flex;flex-direction:column}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:24px;background:#0C1322;border-radius:0 0 16px 16px;z-index:30}
+  .statusbar{height:38px;display:flex;align-items:flex-end;justify-content:space-between;
+             padding:0 20px 6px;font-size:12px;font-weight:600;color:var(--ink);background:transparent;z-index:5}
+  .statusbar .rt{letter-spacing:1px}
+
+  /* app chrome */
+  .appbar{background:var(--card);padding:6px 16px 12px}
+  .appbar.brand{background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff}
+  .appbar .row{display:flex;align-items:center;gap:10px}
+  .loc{font-size:13px;font-weight:600;display:flex;align-items:center;gap:4px}
+  .search{flex:1;background:rgba(255,255,255,.92);border-radius:20px;padding:9px 14px;display:flex;align-items:center;gap:8px;color:#8A97A8;font-size:13px}
+  .search.dark{background:#EEF2F6}
+  .mic{margin-left:auto;width:22px;height:22px;color:var(--brand)}
+
+  .body{flex:1;overflow:auto;padding:14px 14px 0}
+  .body::-webkit-scrollbar{width:0}
+
+  /* tab bar */
+  .tabbar{display:flex;background:var(--card);border-top:1px solid var(--line);padding:7px 4px 9px}
+  .tab{flex:1;text-align:center;font-size:10.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+  .tab .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .tab.on{color:var(--brand);font-weight:650}
+
+  /* generic ui bits */
+  .chiprow{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:10px}
+  .chip{flex:0 0 auto;background:#fff;border:1px solid var(--line);color:var(--ink2);border-radius:16px;padding:5px 12px;font-size:12px;font-weight:600}
+  .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .chip.dim{color:#5B687A}
+
+  .countdown{background:linear-gradient(100deg,#06382F,#0B6E6B);color:#fff;border-radius:14px;padding:11px 14px;
+             display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .countdown .lab{font-size:12px;opacity:.85}
+  .countdown .t{font-variant-numeric:tabular-nums;font-weight:800;font-size:17px;letter-spacing:1px}
+  .countdown .t b{background:rgba(255,255,255,.16);padding:2px 5px;border-radius:6px}
+
+  .card{background:var(--card);border-radius:16px;padding:13px;margin-bottom:12px;border:1px solid var(--line);box-shadow:0 6px 16px -12px rgba(15,23,42,.3)}
+  .haz{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px}
+  .haz.r{background:#FEE9E9;color:var(--r)} .haz.a{background:#FEF3E2;color:#B45309} .haz.g{background:#E7F8EE;color:#15803D}
+  .dot{width:7px;height:7px;border-radius:50%}
+  .ttl{font-size:15px;font-weight:750;color:var(--ink);margin:8px 0 6px;line-height:1.35}
+  .elem{display:grid;grid-template-columns:auto 1fr;gap:5px 8px;font-size:12px;margin:8px 0}
+  .elem .k{color:var(--brand-d);font-weight:700;white-space:nowrap}
+  .elem .v{color:var(--ink2)}
+  .poster{height:96px;border-radius:11px;margin:9px 0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;text-align:center;position:relative;overflow:hidden}
+  .poster small{position:absolute;bottom:6px;right:8px;font-size:9px;font-weight:600;opacity:.8}
+  .metarow{display:flex;align-items:center;gap:14px;font-size:11.5px;color:var(--muted);margin-top:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .tg{font-size:10.5px;color:#5B687A;background:#F1F5F9;border-radius:6px;padding:2px 7px}
+
+  /* AI chat */
+  .chat{background:#EAF0F4}
+  .msg{max-width:84%;padding:10px 12px;border-radius:14px;font-size:13px;margin-bottom:10px;line-height:1.5}
+  .msg.u{background:var(--brand);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+  .msg.a{background:#fff;color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px;box-shadow:0 4px 12px -8px rgba(0,0,0,.2)}
+  .msg.a .h{font-weight:750;color:var(--r);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .msg.a .step{margin:7px 0;font-size:12.5px}
+  .msg.a .step b{color:var(--brand-d)}
+  .msg.a .ref{margin-top:9px;background:#F4F7FA;border-radius:10px;padding:8px;font-size:11.5px;color:var(--ink2);border-left:3px solid var(--radar)}
+  .disc{font-size:10px;color:var(--muted);margin-top:8px}
+  .inbar{display:flex;align-items:center;gap:8px;background:#fff;border-top:1px solid var(--line);padding:9px 12px}
+  .inbar .field{flex:1;background:#EEF2F6;border-radius:18px;padding:9px 14px;color:#8A97A8;font-size:12.5px}
+  .iconbtn{width:34px;height:34px;border-radius:50%;background:#EEF2F6;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
+  .iconbtn.p{background:var(--brand);color:#fff}
+
+  /* tools grid */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .tool{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-align:center}
+  .tool .ti{width:42px;height:42px;border-radius:12px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
+  .tool b{font-size:13px;color:var(--ink);display:block}
+  .tool span{font-size:10.5px;color:var(--muted)}
+
+  .result{background:#fff;border-radius:14px;border:1px solid var(--line);padding:13px}
+  .gauge{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .gauge .lv{font-size:22px;font-weight:800;color:var(--r)}
+  .bartrack{flex:1;height:9px;border-radius:5px;background:#EEF2F6;overflow:hidden}
+  .barfill{height:100%;background:linear-gradient(90deg,var(--g),var(--a),var(--r))}
+  .risk-li{display:flex;gap:8px;font-size:12px;color:var(--ink2);margin:7px 0}
+  .risk-li .b{color:var(--r);font-weight:800}
+
+  /* form / ugc */
+  .field-lbl{font-size:12px;font-weight:700;color:var(--ink);margin:12px 0 6px;display:flex;align-items:center;gap:6px}
+  .input{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px;font-size:12.5px;color:var(--ink2)}
+  .voicebox{background:#fff;border:1.5px dashed var(--brand);border-radius:13px;padding:14px;text-align:center;color:var(--brand-d);font-size:12.5px}
+  .voicebox .wav{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:24px;margin:8px 0}
+  .voicebox .wav i{width:3px;border-radius:2px;background:var(--brand);display:block}
+  .aidraft{background:#F0FBF8;border:1px solid #BFEFE5;border-radius:13px;padding:12px;margin-top:10px}
+  .aidraft .tagai{display:inline-block;background:var(--brand);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:7px;margin-bottom:8px}
+
+  /* profile / radar */
+  .hero-prof{background:linear-gradient(135deg,#0B6E6B,#0E9E8E);border-radius:16px;padding:16px;color:#fff;margin-bottom:14px}
+  .hero-prof h3{font-size:18px;font-weight:800;margin-bottom:3px}
+  .hero-prof p{font-size:12px;opacity:.9}
+  .badgewall{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+  .bdg{text-align:center}
+  .bdg .ring{width:52px;height:52px;margin:0 auto 5px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;
+        background:radial-gradient(circle at 35% 30%,#FFE9A8,#E8A93C);box-shadow:0 4px 12px -4px rgba(232,169,60,.6)}
+  .bdg .ring.lock{background:#E7ECF1;color:#B9C3CF;box-shadow:none}
+  .bdg span{font-size:10px;color:var(--ink2);font-weight:600}
+  .ptag{display:inline-block;background:#FEF3E2;color:#B45309;font-size:11px;font-weight:700;border-radius:8px;padding:4px 10px;margin:3px 4px 0 0}
+  .advice{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;margin-top:10px}
+  .advice li{font-size:12px;color:var(--ink2);margin:7px 0;padding-left:18px;position:relative}
+  .advice li:before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:800}
+
+  /* guardian */
+  .guard-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .ava{width:44px;height:44px;border-radius:50%;background:#E7F8EE;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .alert{background:#FFF6E9;border:1px solid #FAE2BC;border-radius:13px;padding:12px;font-size:12px;color:#92600C;margin-bottom:10px}
+  .alert b{color:#B45309}
+
+  /* PC mock */
+  .browser{background:#0C1322;border-radius:16px;padding:0;overflow:hidden;box-shadow:0 30px 70px -25px rgba(0,0,0,.75)}
+  .bbar{height:42px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#161E2E}
+  .bbar i{width:12px;height:12px;border-radius:50%;display:block}
+  .urlbar{flex:1;margin-left:14px;background:#0C1322;border-radius:8px;height:26px;display:flex;align-items:center;padding:0 12px;color:#7E8CA0;font-size:12px}
+  .pc{background:var(--bg);height:760px;overflow:hidden;display:flex;flex-direction:column}
+  .pcnav{background:#fff;border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;gap:26px;padding:0 28px}
+  .pcnav .blogo{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--ink);font-size:17px}
+  .pcnav a{font-size:14px;color:var(--ink2);font-weight:600;text-decoration:none}
+  .pcnav a.on{color:var(--brand)}
+  .pcnav .psearch{margin-left:auto;width:280px;background:#EEF2F6;border-radius:20px;padding:8px 14px;display:flex;align-items:center;gap:8px;color:#8A97A8;font-size:13px}
+  .pcbtn{background:var(--brand);color:#fff;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700}
+  .pcbody{flex:1;display:grid;grid-template-columns:208px 1fr 264px;gap:20px;padding:20px 28px;overflow:auto}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
+  .panel h4{font-size:13px;color:var(--ink);margin-bottom:10px;font-weight:750}
+  .fgroup{margin-bottom:14px}
+  .fgroup .gl{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:7px;letter-spacing:.5px}
+  .fopt{font-size:12.5px;color:var(--ink2);padding:5px 0;display:flex;align-items:center;gap:7px}
+  .fopt .cb{width:13px;height:13px;border-radius:4px;border:1.5px solid var(--line)}
+  .fopt.on{color:var(--brand-d);font-weight:650}
+  .fopt.on .cb{background:var(--brand);border-color:var(--brand)}
+  .feedgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .rankli{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
+  .rankli .no{width:20px;height:20px;border-radius:6px;background:#EEF2F6;color:var(--ink2);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+  .rankli .no.top{background:var(--brand);color:#fff}
+
+  .foot{color:#54627A;font-size:12px;text-align:center;margin-top:30px;line-height:1.8}
+  .foot b{color:#8696AC}
+  @media(max-width:700px){.tokens{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <div class="top">
+    <svg class="logo" viewBox="0 0 100 100" fill="none">
+      <path d="M40 40 L40 16 A24 24 0 0 1 64 40 Z" fill="#16D6B4" opacity=".22"/>
+      <circle cx="40" cy="40" r="25" fill="none" stroke="#16D6B4" stroke-width="6"/>
+      <circle cx="40" cy="40" r="15" fill="none" stroke="#16D6B4" stroke-width="3.5" opacity=".7"/>
+      <circle cx="40" cy="40" r="6" fill="#16D6B4"/>
+      <line x1="58" y1="58" x2="84" y2="84" stroke="#16D6B4" stroke-width="9" stroke-linecap="round"/>
+    </svg>
+    <h1>坑查查 <small>KENG CHACHA · 原型设计图 V2.0</small></h1>
+  </div>
+  <p class="lead">
+    面向中国用户全生命周期的<b>生活防坑查询 + 能力自测 + 实时风险检测 + 互助科普</b>平台静态高保真原型。
+    本文件可直接用浏览器打开浏览。覆盖 <b>H5 端 7 个核心界面</b> 与 <b>PC 端首页</b>，体现五维分类、2 小时更新、语音/对话/拍照低门槛交互与 AI 能力。
+  </p>
+
+  <!-- design tokens -->
+  <div class="tokens">
+    <div class="tok"><span class="sw" style="background:#0E9E8E"></span>主品牌 Brand #0E9E8E</div>
+    <div class="tok"><span class="sw" style="background:#16D6B4"></span>雷达高亮 #16D6B4</div>
+    <div class="tok"><span class="sw" style="background:#22C55E"></span>危害·低 🟢</div>
+    <div class="tok"><span class="sw" style="background:#F59E0B"></span>危害·中 🟡</div>
+    <div class="tok"><span class="sw" style="background:#EF4444"></span>危害·高 🔴</div>
+    <div class="tok">字体 PingFang / 微软雅黑</div>
+    <div class="tok">圆角 16-32px · 卡片化</div>
+  </div>
+
+  <!-- ============ H5 SECTION ============ -->
+  <div class="sec-title"><span class="bar"></span><h2>H5 移动端</h2><span>微信 / 浏览器 · 375pt 设计稿</span></div>
+
+  <div class="gallery">
+
+    <!-- ===== Screen 1: 避坑头条 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar brand">
+          <div class="row" style="margin-bottom:10px">
+            <span class="loc">📍 北京 ▾</span>
+            <span style="margin-left:auto;font-size:12px;opacity:.9">适老化 ◎</span>
+          </div>
+          <div class="search dark">
+            <span>🔍</span><span style="flex:1">说出 / 输入你想避的坑…</span><span style="font-size:16px">🎤</span>
+          </div>
+        </div>
+        <div class="body">
+          <div class="countdown">
+            <div><div class="lab">距下次内容更新</div></div>
+            <div class="t"><b>01</b>:<b>23</b>:<b>45</b></div>
+          </div>
+          <div class="chiprow">
+            <span class="chip on">推荐</span>
+            <span class="chip">👶 人生阶段</span>
+            <span class="chip">🏷 领域</span>
+            <span class="chip">🧠 心理</span>
+            <span class="chip">⚠ 危害</span>
+          </div>
+          <div class="chiprow">
+            <span class="chip dim">大学生</span><span class="chip dim">求职</span>
+            <span class="chip dim">金融</span><span class="chip dim">老人</span><span class="chip dim">杀猪盘</span>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="haz r"><span class="dot" style="background:#EF4444"></span>高危</span>
+              <span style="font-size:11px;color:#94A3B8;margin-left:auto">官方预警 · 2小时前</span>
+            </div>
+            <div class="ttl">“注销校园贷”反诈：自称客服要你配合销户</div>
+            <div class="elem">
+              <span class="k">踩坑人群</span><span class="v">毕业 1-3 年的年轻人</span>
+              <span class="k">坑人套路</span><span class="v">冒充客服称账户影响征信，诱导网贷转账“清空额度”</span>
+              <span class="k">损失后果</span><span class="v">平均被骗 3.6 万元，背上真实贷款</span>
+              <span class="k">避坑常识</span><span class="v">征信不会因“注销”受影响，任何让你贷款转账的都是诈骗</span>
+            </div>
+            <div class="poster" style="background:linear-gradient(120deg,#B91C1C,#EF4444)">
+              ⚠ 凡“转账=清空额度”皆诈骗<small>AI 自动生成海报</small>
+            </div>
+            <div class="tags"><span class="tg">#职场新人</span><span class="tg">#网络诈骗</span><span class="tg">#权威崇拜</span><span class="tg">#冒充客服</span></div>
+            <div class="metarow"><span>👍 学到了 2.3w</span><span>🔊 听一听</span><span>↗ 分享</span></div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="haz a"><span class="dot" style="background:#F59E0B"></span>中危</span>
+              <span style="font-size:11px;color:#94A3B8;margin-left:auto">真实经历 · 3小时前</span>
+            </div>
+            <div class="ttl">健身房“预付年卡”充值后闭店跑路</div>
+            <div class="elem">
+              <span class="k">坑人套路</span><span class="v">开业大促“充3年送1年”，集中收款后关门</span>
+              <span class="k">避坑常识</span><span class="v">预付卡单次别超额，认准“7天冷静期”，留存合同与转账凭证</span>
+            </div>
+            <div class="poster" style="background:linear-gradient(120deg,#B45309,#F59E0B)">预付有风险 · 充值要克制</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><span class="ic">📰</span>头条</div>
+          <div class="tab"><span class="ic">💬</span>AI助手</div>
+          <div class="tab"><span class="ic">🧭</span>自测·工具</div>
+          <div class="tab"><span class="ic">✍</span>上报</div>
+          <div class="tab"><span class="ic">👤</span>我的</div>
+        </div>
+      </div></div>
+      <div class="cap"><b>① 避坑头条</b><span>2h 更新 · 五维分类 · 语音搜索 · 四要素卡片</span></div>
+    </div>
+
+    <!-- ===== Screen 2: AI 避坑助手 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar" style="text-align:center;padding-top:10px">
+          <b style="font-size:15px;color:var(--ink)">AI 避坑助手</b>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">可说话 · 可拍照 · 可贴链接</div>
+        </div>
+        <div class="body chat">
+          <div class="msg u">我妈被拉进一个荐股群，每天有“老师”讲课，还说能内部抢原始股 🎤</div>
+          <div class="msg a">
+            <div class="h">⚠ 高度疑似「杀猪盘 / 荐股投资」骗局</div>
+            <div class="step"><b>套路类型：</b>金融理财 · 虚假投资 + 权威崇拜 + 从众效应</div>
+            <div class="step"><b>套路推演：</b>先免费“讲课”建立信任 → 群里“托”晒盈利 → 引导下载第三方 App → 小额返利 → 大额后无法提现。</div>
+            <div class="step"><b>你该怎么做：</b>① 别下载任何站外 App、别转账；② 原始股须证监会核准，“内部名额”都是假的；③ 保留聊天证据，拨打 <b>96110</b> 咨询/举报。</div>
+            <div class="ref">📎 关联真实案例：《“导师”带你抢原始股，38 人被骗 920 万》 ›</div>
+            <div class="disc">AI 辅助判断，不构成法律或官方结论，请以官方机构核实为准。</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="chip on" style="font-size:11px">测测我妈会不会中招</span>
+            <span class="chip" style="font-size:11px">开启家人守护</span>
+          </div>
+        </div>
+        <div class="inbar">
+          <span class="iconbtn">📷</span><span class="iconbtn">🔗</span>
+          <span class="field">问问 AI，或长按说话…</span>
+          <span class="iconbtn p">🎤</span>
+        </div>
+      </div></div>
+      <div class="cap"><b>② AI 避坑助手</b><span>对话查询 · RAG 检索 · 语音/拍照/链接多模态</span></div>
+    </div>
+
+    <!-- ===== Screen 3: 防坑自测·画像结果 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar" style="text-align:center;padding-top:10px">
+          <b style="font-size:15px;color:var(--ink)">我的防坑画像</b>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">标准 30 题 · 自适应出题</div>
+        </div>
+        <div class="body">
+          <div class="hero-prof">
+            <h3>「沉没成本猎物 · 法网外游侠」</h3>
+            <p>防坑总分 <b style="font-size:20px">68</b>/100 · 超过 42% 的用户 · 默认私密 🔒</p>
+          </div>
+          <div class="card" style="padding-top:6px">
+            <div style="text-align:center;font-size:12px;color:#94A3B8;margin:4px 0">六维能力雷达</div>
+            <svg viewBox="0 0 220 210" width="100%" height="190">
+              <polygon points="110,30 179,70 179,150 110,190 41,150 41,70" fill="none" stroke="#E2E8F0" stroke-width="1.5"/>
+              <polygon points="110,70 144,90 144,130 110,150 76,130 76,90" fill="none" stroke="#EEF2F6" stroke-width="1"/>
+              <line x1="110" y1="110" x2="110" y2="30" stroke="#EDF1F5"/><line x1="110" y1="110" x2="179" y2="70" stroke="#EDF1F5"/>
+              <line x1="110" y1="110" x2="179" y2="150" stroke="#EDF1F5"/><line x1="110" y1="110" x2="110" y2="190" stroke="#EDF1F5"/>
+              <line x1="110" y1="110" x2="41" y2="150" stroke="#EDF1F5"/><line x1="110" y1="110" x2="41" y2="70" stroke="#EDF1F5"/>
+              <polygon points="110,70 137,94 158,138 110,138 68,134 72,88" fill="rgba(14,158,142,.22)" stroke="#0E9E8E" stroke-width="2"/>
+              <text x="110" y="22" font-size="10" fill="#475569" text-anchor="middle">心理</text>
+              <text x="188" y="68" font-size="10" fill="#475569">法律</text>
+              <text x="186" y="158" font-size="10" fill="#475569">消费</text>
+              <text x="110" y="205" font-size="10" fill="#475569" text-anchor="middle">金融</text>
+              <text x="14" y="158" font-size="10" fill="#475569">职场</text>
+              <text x="20" y="68" font-size="10" fill="#475569">网络</text>
+            </svg>
+          </div>
+          <div style="font-size:12px;font-weight:750;color:var(--ink);margin:6px 0 4px">⚡ 你未来最可能踩的 3 个坑</div>
+          <div>
+            <span class="ptag">原始股 / 虚拟币投资</span>
+            <span class="ptag">先付费的兼职刷单</span>
+            <span class="ptag">合同里的违约金陷阱</span>
+          </div>
+          <div class="advice">
+            <div style="font-size:12px;font-weight:750;color:var(--ink);margin-bottom:4px">🛡 给你的避坑动作</div>
+            <ul style="list-style:none">
+              <li>任何“先交钱”的投资/兼职一律拒绝</li>
+              <li>签约前用「合同体检」扫一遍违约条款</li>
+              <li>转账前先用「链接验毒」核验对方</li>
+            </ul>
+          </div>
+          <div style="display:flex;gap:8px;margin:12px 0 4px">
+            <span class="chip on" style="flex:1;text-align:center;padding:10px">生成分享卡片</span>
+            <span class="chip" style="flex:1;text-align:center;padding:10px">再测一次</span>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap"><b>③ 防坑自测 · 画像</b><span>自适应出题 · 雷达图 · 高危预测 · 可执行建议</span></div>
+    </div>
+
+    <!-- ===== Screen 4: 风险检测工具箱 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar" style="text-align:center;padding-top:10px">
+          <b style="font-size:15px;color:var(--ink)">实时风险检测工具箱</b>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">你的随身“安检仪” · 事前拦截</div>
+        </div>
+        <div class="body">
+          <div class="grid2">
+            <div class="tool"><div class="ti" style="background:#0E9E8E">📄</div><b>合同体检</b><span>拍照查风险条款</span></div>
+            <div class="tool"><div class="ti" style="background:#EF4444">🔗</div><b>链接验毒</b><span>识别钓鱼仿冒</span></div>
+            <div class="tool"><div class="ti" style="background:#F59E0B">📷</div><b>拍照识坑</b><span>聊天/招聘截图</span></div>
+            <div class="tool"><div class="ti" style="background:#6366F1">💳</div><b>收款核验</b><span>对公转私预警</span></div>
+            <div class="tool"><div class="ti" style="background:#0EA5E9">🏢</div><b>企业核验</b><span>工商/失信提示</span></div>
+            <div class="tool"><div class="ti" style="background:#64748B">＋</div><b>更多</b><span>持续上线</span></div>
+          </div>
+          <div style="font-size:12px;font-weight:750;color:var(--ink);margin:6px 0 8px">最近检测 · 链接验毒</div>
+          <div class="result">
+            <div class="gauge">
+              <span class="lv">高风险</span>
+              <div class="bartrack"><div class="barfill" style="width:88%"></div></div>
+            </div>
+            <div style="font-size:12px;color:var(--ink2);background:#F8FAFC;border-radius:9px;padding:8px;margin-bottom:8px;word-break:break-all">
+              http://icbc-vip-active<b style="color:#EF4444">.xyz</b>/login
+            </div>
+            <div class="risk-li"><span class="b">!</span><span>仿冒「工商银行」官网，域名非官方后缀 .xyz</span></div>
+            <div class="risk-li"><span class="b">!</span><span>页面索要银行卡号 + 短信验证码（典型钓鱼）</span></div>
+            <div class="risk-li"><span class="b">✓</span><span>建议：立即关闭，勿填写任何信息；官方请认准 95588</span></div>
+            <div class="disc">AI 辅助判断，不构成官方结论。</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><span class="ic">📰</span>头条</div>
+          <div class="tab"><span class="ic">💬</span>AI助手</div>
+          <div class="tab on"><span class="ic">🧭</span>自测·工具</div>
+          <div class="tab"><span class="ic">✍</span>上报</div>
+          <div class="tab"><span class="ic">👤</span>我的</div>
+        </div>
+      </div></div>
+      <div class="cap"><b>④ 风险检测工具箱</b><span>合同体检 / 链接验毒 / 拍照识坑 / 收款核验</span></div>
+    </div>
+
+    <!-- ===== Screen 5: UGC 上报 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar" style="text-align:center;padding-top:10px">
+          <b style="font-size:15px;color:var(--ink)">上报我踩过的坑</b>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">帮别人少踩坑 · 可领防坑贡献值</div>
+        </div>
+        <div class="body">
+          <div class="voicebox">
+            🎤 长按说出你的经历，AI 帮你整理成稿
+            <div class="wav">
+              <i style="height:8px"></i><i style="height:16px"></i><i style="height:22px"></i><i style="height:14px"></i>
+              <i style="height:20px"></i><i style="height:10px"></i><i style="height:18px"></i><i style="height:7px"></i>
+            </div>
+            <span style="font-size:11px;color:#94A3B8">不会打字？说就行，老人也能用</span>
+          </div>
+
+          <div class="aidraft">
+            <span class="tagai">AI 已自动成稿 · 四要素</span>
+            <div class="elem">
+              <span class="k">时间地点</span><span class="v">2026·03 · 杭州</span>
+              <span class="k">人群标签</span><span class="v">求职大学生</span>
+              <span class="k">事件经过</span><span class="v">应聘“高薪打字员”，被要求先交 298 元会员押金，付款后被拉黑</span>
+              <span class="k">避坑建议</span><span class="v">正规招聘绝不收押金/培训费，先收钱的都是坑</span>
+            </div>
+            <div style="font-size:11px;color:#0B6E6B;margin-top:6px">轻点任意要素可修改 ✎</div>
+          </div>
+
+          <div class="field-lbl">📎 佐证图片<span style="color:#94A3B8;font-weight:500">（自动为人脸/证件打码）</span></div>
+          <div style="display:flex;gap:8px">
+            <div style="width:60px;height:60px;border-radius:11px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:#94A3B8">＋</div>
+            <div style="width:60px;height:60px;border-radius:11px;background:#0F172A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px">已打码✓</div>
+          </div>
+
+          <div style="background:var(--brand);color:#fff;text-align:center;border-radius:13px;padding:13px;font-weight:700;margin:16px 0 4px">
+            提交审核（AI + 人工双审）
+          </div>
+        </div>
+      </div></div>
+      <div class="cap"><b>⑤ 踩坑上报（UGC）</b><span>语音转写 · AI 成稿 · 自动打码 · 贡献值</span></div>
+    </div>
+
+    <!-- ===== Screen 6: 个人中心 / 徽章墙 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar brand" style="padding-bottom:18px">
+          <div class="row">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px">🛡</div>
+            <div style="margin-left:4px">
+              <div style="font-weight:800;font-size:16px;display:flex;align-items:center;gap:6px">清醒的打工人 <span style="font-size:10px;background:#fff;color:#0B6E6B;border-radius:6px;padding:1px 6px">人间清醒·LV3</span></div>
+              <div style="font-size:12px;opacity:.9">防坑贡献值 1,280 · 有效上报 14 条</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="card">
+            <div style="font-size:13px;font-weight:750;color:var(--ink);margin-bottom:4px">我的身份徽章墙</div>
+            <div class="badgewall">
+              <div class="bdg"><div class="ring">🏅</div><span>避坑先驱</span></div>
+              <div class="bdg"><div class="ring">🔥</div><span>反诈布道者</span></div>
+              <div class="bdg"><div class="ring">⚔</div><span>打假斗士</span></div>
+              <div class="bdg"><div class="ring lock">🔒</div><span>LV4待解锁</span></div>
+            </div>
+          </div>
+
+          <div class="guard-card">
+            <div class="ava">👵</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--ink)">家人守护 · 妈妈</div>
+              <div style="font-size:11px;color:#94A3B8">已订阅：保健品 / 以房养老 / 荐股</div>
+            </div>
+            <span style="font-size:11px;color:var(--brand);font-weight:700">管理 ›</span>
+          </div>
+          <div class="alert">
+            <b>⚠ 守护提醒：</b>近 2 小时新增 3 条“养生讲座送鸡蛋”同类预警，已为妈妈推送大字语音卡片。
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="card" style="margin:0;text-align:center"><div style="font-size:20px">📋</div><div style="font-size:12px;color:var(--ink2);margin-top:4px">我的上报 · 审核</div></div>
+            <div class="card" style="margin:0;text-align:center"><div style="font-size:20px">🧾</div><div style="font-size:12px;color:var(--ink2);margin-top:4px">检测记录（私密）</div></div>
+            <div class="card" style="margin:0;text-align:center"><div style="font-size:20px">⭐</div><div style="font-size:12px;color:var(--ink2);margin-top:4px">我的收藏</div></div>
+            <div class="card" style="margin:0;text-align:center"><div style="font-size:20px">⚙</div><div style="font-size:12px;color:var(--ink2);margin-top:4px">隐私与适老设置</div></div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><span class="ic">📰</span>头条</div>
+          <div class="tab"><span class="ic">💬</span>AI助手</div>
+          <div class="tab"><span class="ic">🧭</span>自测·工具</div>
+          <div class="tab"><span class="ic">✍</span>上报</div>
+          <div class="tab on"><span class="ic">👤</span>我的</div>
+        </div>
+      </div></div>
+      <div class="cap"><b>⑥ 个人中心</b><span>稀缺徽章墙 · 家人守护 · 检测记录 · 适老设置</span></div>
+    </div>
+
+    <!-- ===== Screen 7: 适老化 / 家人守护代查 ===== -->
+    <div class="device">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="statusbar"><span class="rt">9:41</span><span>5G ▲ 100%</span></div>
+        <div class="appbar" style="background:#0B6E6B;color:#fff;text-align:center;padding:14px 16px">
+          <b style="font-size:20px;color:#fff">坑查查 · 长辈版</b>
+          <div style="font-size:13px;opacity:.92;margin-top:3px">字大 · 能听 · 孩子帮你看</div>
+        </div>
+        <div class="body" style="padding:18px 16px">
+          <div class="search dark" style="padding:16px;font-size:17px;border-radius:16px;margin-bottom:16px">
+            <span style="font-size:22px">🎤</span><span style="flex:1;color:#475569">按住说：这个能信吗？</span>
+          </div>
+          <div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px">
+            <div style="font-size:18px;font-weight:800;color:var(--r);margin-bottom:8px">🔴 这是骗局，别相信！</div>
+            <div style="font-size:16px;color:var(--ink);line-height:1.7">“免费领鸡蛋 + 听课买保健品”是典型的<b>养老保健品骗局</b>，吃了没用还很贵。</div>
+            <div style="background:var(--brand);color:#fff;text-align:center;border-radius:14px;padding:15px;font-size:18px;font-weight:800;margin-top:14px">🔊 点我朗读</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:#FEE9E9;border-radius:16px;padding:18px;text-align:center">
+              <div style="font-size:30px">📞</div><div style="font-size:16px;font-weight:800;color:var(--r);margin-top:4px">打 96110</div>
+            </div>
+            <div style="background:#E7F8EE;border-radius:16px;padding:18px;text-align:center">
+              <div style="font-size:30px">👨‍👩‍👧</div><div style="font-size:16px;font-weight:800;color:#15803D;margin-top:4px">问孩子</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap"><b>⑦ 适老化 · 长辈版</b><span>大字 / 语音优先 / 一键朗读 / 一键求助</span></div>
+    </div>
+
+  </div>
+
+  <!-- ============ PC SECTION ============ -->
+  <div class="sec-title"><span class="bar"></span><h2>PC 端</h2><span>避坑头条首页 · 1440 宽栅格</span></div>
+
+  <div class="browser">
+    <div class="bbar">
+      <i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i>
+      <div class="urlbar">🔒 kengchacha.com/home</div>
+    </div>
+    <div class="pc">
+      <div class="pcnav">
+        <div class="blogo">
+          <svg width="26" height="26" viewBox="0 0 100 100" fill="none"><circle cx="40" cy="40" r="25" stroke="#0E9E8E" stroke-width="7" fill="none"/><circle cx="40" cy="40" r="14" stroke="#16D6B4" stroke-width="4" fill="none" opacity=".7"/><circle cx="40" cy="40" r="6" fill="#16D6B4"/><line x1="58" y1="58" x2="84" y2="84" stroke="#0E9E8E" stroke-width="10" stroke-linecap="round"/></svg>
+          坑查查
+        </div>
+        <a class="on">避坑头条</a><a>AI 助手</a><a>防坑自测</a><a>风险检测</a><a>踩坑广场</a><a>家人守护</a>
+        <div class="psearch">🔍 <span style="flex:1">搜索你想避的坑…</span> 🎤</div>
+        <div class="pcbtn">登录 / 注册</div>
+      </div>
+      <div class="pcbody">
+
+        <!-- left: 五维筛选 -->
+        <div class="panel">
+          <h4>五维分类筛选</h4>
+          <div class="fgroup"><div class="gl">人生阶段</div>
+            <div class="fopt on"><span class="cb"></span>大学生</div>
+            <div class="fopt"><span class="cb"></span>职场新人</div>
+            <div class="fopt"><span class="cb"></span>宝妈 / 孕产</div>
+            <div class="fopt"><span class="cb"></span>老年人</div>
+          </div>
+          <div class="fgroup"><div class="gl">领域场景</div>
+            <div class="fopt on"><span class="cb"></span>金融理财</div>
+            <div class="fopt"><span class="cb"></span>求职就业</div>
+            <div class="fopt"><span class="cb"></span>消费陷阱</div>
+            <div class="fopt"><span class="cb"></span>网络诈骗</div>
+          </div>
+          <div class="fgroup"><div class="gl">心理机制</div>
+            <div class="fopt"><span class="cb"></span>侥幸心理</div>
+            <div class="fopt"><span class="cb"></span>贪小便宜</div>
+            <div class="fopt"><span class="cb"></span>权威崇拜</div>
+          </div>
+          <div class="fgroup"><div class="gl">危害等级</div>
+            <div class="fopt"><span class="cb" style="background:#EF4444;border-color:#EF4444"></span>🔴 高危</div>
+            <div class="fopt"><span class="cb" style="background:#F59E0B;border-color:#F59E0B"></span>🟡 中危</div>
+          </div>
+        </div>
+
+        <!-- center: feed -->
+        <div>
+          <div class="feedgrid">
+            <div class="panel" style="padding:0;overflow:hidden">
+              <div class="poster" style="height:120px;border-radius:0;background:linear-gradient(120deg,#B91C1C,#EF4444)">⚠ “注销校园贷”都是诈骗</div>
+              <div style="padding:13px">
+                <span class="haz r"><span class="dot" style="background:#EF4444"></span>高危 · 官方预警</span>
+                <div class="ttl" style="font-size:14px">冒充客服称影响征信，诱导网贷转账</div>
+                <div style="font-size:12px;color:var(--ink2)">征信不会因“注销”改变，让你贷款转账的都是坑。</div>
+                <div class="metarow"><span>👍 2.3w</span><span>🔊 听</span><span>↗ 分享</span></div>
+              </div>
+            </div>
+            <div class="panel" style="padding:0;overflow:hidden">
+              <div class="poster" style="height:120px;border-radius:0;background:linear-gradient(120deg,#B45309,#F59E0B)">预付有风险 · 充值需克制</div>
+              <div style="padding:13px">
+                <span class="haz a"><span class="dot" style="background:#F59E0B"></span>中危 · 真实经历</span>
+                <div class="ttl" style="font-size:14px">健身房预付年卡，充值后闭店跑路</div>
+                <div style="font-size:12px;color:var(--ink2)">认准 7 天冷静期，留存合同与转账凭证。</div>
+                <div class="metarow"><span>👍 8.6k</span><span>🔊 听</span><span>↗ 分享</span></div>
+              </div>
+            </div>
+            <div class="panel" style="padding:0;overflow:hidden">
+              <div class="poster" style="height:120px;border-radius:0;background:linear-gradient(120deg,#0B6E6B,#0E9E8E)">先付款的兼职 = 诈骗</div>
+              <div style="padding:13px">
+                <span class="haz r"><span class="dot" style="background:#EF4444"></span>高危 · 求职就业</span>
+                <div class="ttl" style="font-size:14px">高薪打字员 / 刷单返利，先交押金被拉黑</div>
+                <div style="font-size:12px;color:var(--ink2)">正规招聘绝不收押金、培训费、服装费。</div>
+                <div class="metarow"><span>👍 1.9w</span><span>🔊 听</span><span>↗ 分享</span></div>
+              </div>
+            </div>
+            <div class="panel" style="padding:0;overflow:hidden">
+              <div class="poster" style="height:120px;border-radius:0;background:linear-gradient(120deg,#6D28D9,#8B5CF6)">免费领 ≠ 免费</div>
+              <div style="padding:13px">
+                <span class="haz a"><span class="dot" style="background:#F59E0B"></span>中危 · 老年人</span>
+                <div class="ttl" style="font-size:14px">养生讲座送鸡蛋，诱导买天价保健品</div>
+                <div style="font-size:12px;color:var(--ink2)">免费的礼品，是为了卖你更贵的东西。</div>
+                <div class="metarow"><span>👍 3.1w</span><span>🔊 听</span><span>↗ 分享</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right: countdown + rank -->
+        <div>
+          <div class="panel" style="background:linear-gradient(135deg,#0B6E6B,#0E9E8E);border:none;color:#fff;margin-bottom:16px">
+            <div style="font-size:12px;opacity:.85">距下次内容更新</div>
+            <div style="font-size:30px;font-weight:800;letter-spacing:2px;margin:6px 0;font-variant-numeric:tabular-nums">01:23:45</div>
+            <div style="font-size:11px;opacity:.8">每 2 小时滚动更新 · 紧跟最新骗局</div>
+          </div>
+          <div class="panel">
+            <h4>🔥 本周防坑榜</h4>
+            <div class="rankli"><span class="no top">1</span>反诈布道者 · 上报 28 条</div>
+            <div class="rankli"><span class="no top">2</span>人间清醒老张 · 上报 21 条</div>
+            <div class="rankli"><span class="no top">3</span>打假小能手 · 上报 19 条</div>
+            <div class="rankli"><span class="no">4</span>避坑萌新 · 上报 12 条</div>
+            <div class="rankli" style="border:none"><span class="no">5</span>清醒的打工人 · 上报 14 条</div>
+          </div>
+          <div class="panel" style="margin-top:16px;text-align:center">
+            <div style="font-size:13px;font-weight:750;color:var(--ink)">还没测过防坑力？</div>
+            <div style="font-size:12px;color:var(--muted);margin:4px 0 10px">30 题测出你最容易踩的坑</div>
+            <div class="pcbtn" style="display:inline-block">立即自测 →</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>坑查查 · 原型设计图 V2.0</b> — 静态高保真原型，仅用于产品评审与开发对齐。<br>
+    配套文档：《坑查查-产品需求文档PRD.md》《坑查查-技术实现方案.md》 · 文中数据均为示意。
+  </div>
+
+</div>
+</body>
+</html>

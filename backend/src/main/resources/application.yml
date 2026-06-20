@@ -1,0 +1,58 @@
+server:
+  port: 8080
+  # Tomcat 连接处理也交给虚拟线程，IO 密集场景更省资源
+  shutdown: graceful
+
+spring:
+  application:
+    name: kengchacha-backend
+
+  # Java 21 虚拟线程（Project Loom）：高并发 IO 用同步写法承载海量连接
+  threads:
+    virtual:
+      enabled: true
+
+  # 开发期：H2 内存库 + PostgreSQL 兼容模式（便于后续平滑切 PostgreSQL）
+  datasource:
+    url: jdbc:h2:mem:kengchacha;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      encoding: UTF-8
+
+  jpa:
+    hibernate:
+      ddl-auto: none          # 建表交给 schema.sql，避免与脚本冲突
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+    show-sql: false
+
+  h2:
+    console:
+      enabled: true           # http://localhost:8080/h2-console 可视化看库
+
+# 业务配置（2 小时滚动更新）
+kengchacha:
+  refresh:
+    interval-hours: 2
+  ai:
+    # provider=mock 走离线规则版；prod 可换 qwen/deepseek 等云 API
+    provider: mock
+    # 向量化：mock=离线字+bigram 哈希向量；prod 切 bge/m3e（或向量化云 API）
+    embedding: mock
+    # 语音：mock=离线确定性 WAV/SSML；prod 切 xfyun/aliyun（讯飞/阿里云 ASR·TTS）
+    voice: mock
+
+logging:
+  level:
+    root: INFO
+    com.kengchacha: INFO

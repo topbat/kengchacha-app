@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>坑查查 · 品牌 LOGO 规范</title>
+<style>
+  :root{--ink:#0F172A;--ink2:#475569;--muted:#94A3B8;--line:#E6EBF1;
+        --brand:#0E9E8E;--brand-d:#0B6E6B;--radar:#16D6B4;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       color:#E2E8F0;background:#080C16;
+       background-image:radial-gradient(1100px 600px at 85% -10%,rgba(22,214,180,.10),transparent 60%);
+       padding:46px 24px 80px;line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{color:#fff;font-size:28px;font-weight:800;letter-spacing:1px}
+  h1 small{display:block;font-size:13px;color:#7E8CA0;font-weight:500;letter-spacing:3px;margin-top:5px}
+  .lead{color:#9AA7B8;font-size:14px;margin:14px 0 30px;max-width:720px}
+  .lead b{color:#CBD5E1}
+  .sec{display:flex;align-items:center;gap:12px;margin:34px 0 18px}
+  .sec .bar{width:4px;height:20px;border-radius:3px;background:linear-gradient(var(--radar),var(--brand))}
+  .sec h2{color:#fff;font-size:18px;font-weight:700}
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:1.3fr 1fr}
+  .card{border-radius:18px;padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:160px;position:relative}
+  .card .tag{position:absolute;top:12px;left:14px;font-size:11px;font-weight:600;letter-spacing:.5px;opacity:.7}
+  .light{background:#F4F7FA;color:var(--ink)}
+  .dark{background:#0C1322;color:#fff;border:1px solid rgba(255,255,255,.07)}
+  .brandbg{background:linear-gradient(135deg,#0E9E8E,#0B6E6B);color:#fff}
+
+  /* lockup */
+  .lock{display:flex;align-items:center;gap:14px}
+  .word{font-weight:800;letter-spacing:1px;line-height:1}
+  .word .a{color:var(--brand)}
+  .word.onlight{color:var(--ink)} .word.onlight .a{color:var(--brand)}
+  .word.onwhite{color:#fff} .word.onwhite .a{color:#BFF3E9}
+  .slogan{font-size:12px;font-weight:600;letter-spacing:3px;opacity:.65;margin-top:6px}
+
+  /* app icon / squircle */
+  .squircle{width:104px;height:104px;border-radius:26px;display:flex;align-items:center;justify-content:center;
+            box-shadow:0 16px 30px -12px rgba(11,110,107,.7)}
+  .favset{display:flex;align-items:flex-end;gap:18px}
+  .fav{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted);font-size:11px}
+
+  .tokens{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .tk{background:#0C1322;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px}
+  .tk .sw{height:46px;border-radius:10px;margin-bottom:10px}
+  .tk b{color:#E2E8F0;font-size:13px}
+  .tk span{color:#7E8CA0;font-size:11.5px;display:block;margin-top:2px}
+
+  .note{background:#0C1322;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:22px}
+  .note li{color:#AEB9C8;font-size:13px;margin:9px 0;padding-left:20px;position:relative}
+  .note li:before{content:"";position:absolute;left:0;top:7px;width:8px;height:8px;border-radius:50%;background:var(--radar)}
+  .note li b{color:#E2E8F0}
+  .do{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .do div{border-radius:14px;padding:14px;font-size:12.5px}
+  .do .y{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86EFAC}
+  .do .n{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+  .foot{color:#54627A;font-size:12px;text-align:center;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>坑查查 <small>KENG CHACHA · 品牌 LOGO 规范</small></h1>
+  <p class="lead">
+    <b>设计理念：</b>图形 = <b>放大镜</b>（查一查）＋ <b>雷达波纹</b>（扫描排查）＋ <b>中心定位点</b>（精准锁定坑点）。
+    放大镜镜片即雷达，呼应"叠字·查查"的查询心智与"避坑"的核心价值。整体亲切、好记、识别度高，可缩到 16px 仍清晰。
+  </p>
+
+  <!-- ============ 主标识 ============ -->
+  <div class="sec"><span class="bar"></span><h2>主标识 · 横版组合</h2></div>
+  <div class="grid g3">
+    <div class="card light"><span class="tag">浅色背景</span>
+      <div class="lock">
+        <svg width="58" height="58" viewBox="0 0 100 100" fill="none">
+          <path d="M40 40 L40 15 A25 25 0 0 1 65 40 Z" fill="#16D6B4" opacity=".18"/>
+          <circle cx="40" cy="40" r="25" fill="none" stroke="#0E9E8E" stroke-width="7"/>
+          <circle cx="40" cy="40" r="15.5" fill="none" stroke="#16D6B4" stroke-width="3.5" opacity=".7"/>
+          <circle cx="40" cy="40" r="6.5" fill="#0E9E8E"/>
+          <line x1="58" y1="58" x2="85" y2="85" stroke="#0E9E8E" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+        <div><div class="word onlight" style="font-size:30px">坑<span class="a">查查</span></div>
+          <div class="slogan" style="color:var(--ink2)">有坑没坑 先查查</div></div>
+      </div>
+    </div>
+
+    <div class="card dark"><span class="tag" style="color:#7E8CA0">深色背景</span>
+      <div class="lock">
+        <svg width="58" height="58" viewBox="0 0 100 100" fill="none">
+          <path d="M40 40 L40 15 A25 25 0 0 1 65 40 Z" fill="#16D6B4" opacity=".22"/>
+          <circle cx="40" cy="40" r="25" fill="none" stroke="#16D6B4" stroke-width="7"/>
+          <circle cx="40" cy="40" r="15.5" fill="none" stroke="#16D6B4" stroke-width="3.5" opacity=".7"/>
+          <circle cx="40" cy="40" r="6.5" fill="#16D6B4"/>
+          <line x1="58" y1="58" x2="85" y2="85" stroke="#16D6B4" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+        <div><div class="word onwhite" style="font-size:30px">坑<span class="a">查查</span></div>
+          <div class="slogan">有坑没坑 先查查</div></div>
+      </div>
+    </div>
+
+    <div class="card brandbg"><span class="tag">品牌色背景（反白）</span>
+      <div class="lock">
+        <svg width="58" height="58" viewBox="0 0 100 100" fill="none">
+          <path d="M40 40 L40 15 A25 25 0 0 1 65 40 Z" fill="#fff" opacity=".2"/>
+          <circle cx="40" cy="40" r="25" fill="none" stroke="#fff" stroke-width="7"/>
+          <circle cx="40" cy="40" r="15.5" fill="none" stroke="#fff" stroke-width="3.5" opacity=".65"/>
+          <circle cx="40" cy="40" r="6.5" fill="#fff"/>
+          <line x1="58" y1="58" x2="85" y2="85" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+        <div><div class="word onwhite" style="font-size:30px">坑查查</div>
+          <div class="slogan" style="opacity:.85">KENG CHACHA</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 应用图标 / Favicon ============ -->
+  <div class="sec"><span class="bar"></span><h2>App 图标 · Favicon · 单色</h2></div>
+  <div class="grid g2">
+    <div class="card dark" style="flex-direction:row;gap:28px;flex-wrap:wrap">
+      <span class="tag" style="color:#7E8CA0">应用图标（圆角方）</span>
+      <div class="squircle" style="background:linear-gradient(140deg,#16D6B4,#0B6E6B)">
+        <svg width="62" height="62" viewBox="0 0 100 100" fill="none">
+          <path d="M42 42 L42 17 A25 25 0 0 1 67 42 Z" fill="#fff" opacity=".22"/>
+          <circle cx="42" cy="42" r="25" fill="none" stroke="#fff" stroke-width="7"/>
+          <circle cx="42" cy="42" r="15.5" fill="none" stroke="#fff" stroke-width="3.5" opacity=".7"/>
+          <circle cx="42" cy="42" r="6.5" fill="#fff"/>
+          <line x1="60" y1="60" x2="86" y2="86" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="squircle" style="background:#0F172A;width:104px">
+        <svg width="62" height="62" viewBox="0 0 100 100" fill="none">
+          <path d="M42 42 L42 17 A25 25 0 0 1 67 42 Z" fill="#16D6B4" opacity=".2"/>
+          <circle cx="42" cy="42" r="25" fill="none" stroke="#16D6B4" stroke-width="7"/>
+          <circle cx="42" cy="42" r="15.5" fill="none" stroke="#16D6B4" stroke-width="3.5" opacity=".7"/>
+          <circle cx="42" cy="42" r="6.5" fill="#16D6B4"/>
+          <line x1="60" y1="60" x2="86" y2="86" stroke="#16D6B4" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card dark"><span class="tag" style="color:#7E8CA0">Favicon 多尺寸 / 单色</span>
+      <div class="favset">
+        <div class="fav">
+          <div class="squircle" style="width:48px;height:48px;border-radius:12px;background:linear-gradient(140deg,#16D6B4,#0B6E6B)">
+            <svg width="30" height="30" viewBox="0 0 100 100" fill="none"><circle cx="42" cy="42" r="25" fill="none" stroke="#fff" stroke-width="8"/><circle cx="42" cy="42" r="7" fill="#fff"/><line x1="60" y1="60" x2="86" y2="86" stroke="#fff" stroke-width="11" stroke-linecap="round"/></svg>
+          </div>48px
+        </div>
+        <div class="fav">
+          <div class="squircle" style="width:32px;height:32px;border-radius:9px;background:linear-gradient(140deg,#16D6B4,#0B6E6B)">
+            <svg width="20" height="20" viewBox="0 0 100 100" fill="none"><circle cx="42" cy="42" r="25" fill="none" stroke="#fff" stroke-width="10"/><line x1="60" y1="60" x2="86" y2="86" stroke="#fff" stroke-width="12" stroke-linecap="round"/></svg>
+          </div>32px
+        </div>
+        <div class="fav">
+          <div class="squircle" style="width:24px;height:24px;border-radius:7px;background:#0E9E8E">
+            <svg width="15" height="15" viewBox="0 0 100 100" fill="none"><circle cx="42" cy="42" r="25" fill="none" stroke="#fff" stroke-width="12"/><line x1="60" y1="60" x2="86" y2="86" stroke="#fff" stroke-width="14" stroke-linecap="round"/></svg>
+          </div>24px
+        </div>
+        <div class="fav">
+          <div class="squircle" style="width:16px;height:16px;border-radius:5px;background:#0E9E8E">
+            <svg width="11" height="11" viewBox="0 0 100 100" fill="none"><circle cx="44" cy="44" r="26" fill="none" stroke="#fff" stroke-width="14"/><line x1="62" y1="62" x2="86" y2="86" stroke="#fff" stroke-width="16" stroke-linecap="round"/></svg>
+          </div>16px
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 色彩与字体 ============ -->
+  <div class="sec"><span class="bar"></span><h2>品牌色彩 · 字体</h2></div>
+  <div class="tokens">
+    <div class="tk"><div class="sw" style="background:#0E9E8E"></div><b>主品牌色 Brand</b><span>#0E9E8E · 信任 / 安全</span></div>
+    <div class="tk"><div class="sw" style="background:#16D6B4"></div><b>雷达高亮 Radar</b><span>#16D6B4 · 活力 / 扫描</span></div>
+    <div class="tk"><div class="sw" style="background:#0B6E6B"></div><b>品牌深色 Deep</b><span>#0B6E6B · 渐变 / 文字</span></div>
+    <div class="tk"><div class="sw" style="background:#0F172A"></div><b>墨黑 Ink</b><span>#0F172A · 主文字</span></div>
+  </div>
+  <div class="tokens" style="margin-top:12px">
+    <div class="tk"><div class="sw" style="background:#22C55E"></div><b>危害·低 🟢</b><span>#22C55E</span></div>
+    <div class="tk"><div class="sw" style="background:#F59E0B"></div><b>危害·中 🟡</b><span>#F59E0B</span></div>
+    <div class="tk"><div class="sw" style="background:#EF4444"></div><b>危害·高 🔴</b><span>#EF4444</span></div>
+    <div class="tk"><div class="sw" style="background:linear-gradient(135deg,#16D6B4,#0B6E6B)"></div><b>主渐变 Gradient</b><span>16D6B4 → 0B6E6B</span></div>
+  </div>
+  <p style="color:#7E8CA0;font-size:12.5px;margin-top:14px">中文字体：PingFang SC / 思源黑体 / 微软雅黑（标题 Bold 800）　拉丁：Inter / SF Pro</p>
+
+  <!-- ============ 使用规范 ============ -->
+  <div class="sec"><span class="bar"></span><h2>使用规范</h2></div>
+  <div class="note">
+    <ul style="list-style:none">
+      <li><b>安全留白：</b>四周至少留出"镜片直径 × 0.4"的空白，勿与其他元素拥挤。</li>
+      <li><b>最小尺寸：</b>带文字横版 ≥ 88px 宽；纯图标 ≥ 16px。</li>
+      <li><b>组合：</b>图标可与"坑查查"中文字标横排或上下竖排；中文为主、KENG CHACHA 为辅。</li>
+    </ul>
+    <div class="do">
+      <div class="y">✓ 在品牌色 / 黑 / 白背景上使用指定配色版本<br>✓ 等比缩放，保持镜片与手柄比例<br>✓ 小尺寸优先使用简化（去波纹）单色版</div>
+      <div class="n">✗ 拉伸变形、旋转、加投影描边<br>✗ 替换非品牌色、低对比背景<br>✗ 改动叠字"查查"或拆散图标与字标间距</div>
+    </div>
+  </div>
+
+  <div class="foot">坑查查 KENG CHACHA · 品牌 LOGO 规范　|　矢量源文件：坑查查-logo.svg</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="240" height="240" role="img" aria-label="坑查查 logo">
+  <defs>
+    <linearGradient id="kc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16D6B4"/>
+      <stop offset="1" stop-color="#0B6E6B"/>
+    </linearGradient>
+  </defs>
+  <!-- 雷达扫描扇区：寓意“扫描排查” -->
+  <path d="M40 40 L40 15 A25 25 0 0 1 65 40 Z" fill="#16D6B4" opacity="0.18"/>
+  <!-- 放大镜镜片 + 雷达波纹：寓意“查一查、有没有坑” -->
+  <circle cx="40" cy="40" r="25" fill="none" stroke="url(#kc)" stroke-width="7"/>
+  <circle cx="40" cy="40" r="15.5" fill="none" stroke="#16D6B4" stroke-width="3.5" opacity="0.7"/>
+  <circle cx="40" cy="40" r="6.5" fill="#0E9E8E"/>
+  <!-- 手柄 -->
+  <line x1="58" y1="58" x2="85" y2="85" stroke="url(#kc)" stroke-width="10" stroke-linecap="round"/>
+</svg>
