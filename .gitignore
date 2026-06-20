@@ -35,3 +35,9 @@ Thumbs.db
 *.log
 .smoke/
 tmp/
+
+# ===== 生成的视频产物（体积大，改作为 GitHub Release 附件分发）=====
+promo/*.mp4
+promo/*.webm
+promo/_verify/
+promo/_chk/
