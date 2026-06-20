@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>坑查查 · 产品发布宣传片 | 出品：topbat</title>
+<style>
+  :root{
+    --brand:#0E9E8E; --brand-d:#0B6E6B; --radar:#16D6B4;
+    --ink:#0F172A; --ink2:#475569; --muted:#94A3B8;
+    --bg:#F4F7FA; --card:#fff; --line:#E6EBF1;
+    --g:#22C55E; --a:#F59E0B; --r:#EF4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#04110f;overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    -webkit-font-smoothing:antialiased}
+
+  /* 固定 1920x1080 舞台，按窗口等比缩放（保证录屏构图一致） */
+  #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1920px;height:1080px;background:var(--bg);
+    transform-origin:center center;overflow:hidden}
+
+  /* 通用场景层 */
+  .scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .9s ease, transform .9s ease;transform:translateY(18px)}
+  .scene.on{opacity:1;visibility:visible;transform:none}
+  .scene .pad{width:1520px;max-width:1520px}
+
+  /* 顶部进度条 */
+  #bar{position:absolute;top:0;left:0;height:5px;width:0;z-index:40;
+    background:linear-gradient(90deg,var(--radar),var(--brand))}
+  /* 角标 */
+  .brandchip{position:absolute;top:30px;left:44px;z-index:30;display:flex;gap:10px;align-items:center;
+    color:var(--brand-d);font-weight:800;font-size:22px;letter-spacing:.5px}
+  .brandchip .sh{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;
+    background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff;font-size:18px;
+    box-shadow:0 6px 16px rgba(14,158,142,.35)}
+  #chapter{position:absolute;top:36px;right:46px;z-index:30;color:var(--muted);
+    font-weight:800;font-size:20px;letter-spacing:2px;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .5s}
+  #sign{position:absolute;bottom:30px;right:46px;z-index:30;color:var(--muted);font-size:18px;letter-spacing:.5px}
+  #sign b{color:var(--brand-d)}
+
+  /* 字幕条 */
+  #cap{position:absolute;left:50%;bottom:118px;transform:translateX(-50%) translateY(10px);z-index:30;
+    max-width:1360px;text-align:center;color:var(--ink);font-size:30px;line-height:1.55;font-weight:600;
+    opacity:0;transition:opacity .6s, transform .6s;
+    background:rgba(255,255,255,.72);backdrop-filter:blur(6px);
+    padding:14px 30px;border-radius:16px;border:1px solid var(--line);
+    box-shadow:0 18px 50px rgba(11,110,107,.12)}
+  #cap.on{opacity:1;transform:translateX(-50%)}
+  #cap .hl{color:var(--brand-d);font-weight:800}
+
+  /* ===== 文字与通用 ===== */
+  .kicker{color:var(--brand);font-weight:800;font-size:24px;letter-spacing:6px;margin-bottom:18px}
+  .big{font-size:96px;font-weight:900;line-height:1.05;color:var(--ink);letter-spacing:-1px}
+  .mid{font-size:60px;font-weight:900;color:var(--ink)}
+  .lede{font-size:34px;color:var(--ink2);font-weight:500;margin-top:24px;line-height:1.5}
+
+  /* ===== Act0 Hook ===== */
+  .hook{display:flex;flex-direction:column;align-items:center;gap:40px;text-align:center}
+  .kw-cloud{display:flex;flex-wrap:wrap;gap:18px 22px;justify-content:center;max-width:1200px}
+  .kw{font-size:40px;font-weight:800;color:var(--ink2);padding:10px 22px;border-radius:14px;
+    background:#fff;border:1px solid var(--line);position:relative;opacity:0;transform:translateY(14px) scale(.96);
+    box-shadow:0 8px 22px rgba(15,23,42,.06)}
+  .scene.on .kw{animation:kwin .5s forwards}
+  .scene.on .kw.struck::after{content:"";position:absolute;left:12px;right:12px;top:50%;height:4px;border-radius:2px;
+    background:var(--r);transform:scaleX(0);transform-origin:left;animation:strike .5s forwards}
+  @keyframes kwin{to{opacity:1;transform:none}}
+  @keyframes strike{to{transform:scaleX(1)}}
+  .scene.on .kw:nth-child(1){animation-delay:.3s}
+  .scene.on .kw:nth-child(2){animation-delay:.9s}
+  .scene.on .kw:nth-child(3){animation-delay:1.5s}
+  .scene.on .kw:nth-child(4){animation-delay:2.1s}
+  .scene.on .kw:nth-child(5){animation-delay:2.7s}
+  .scene.on .kw:nth-child(6){animation-delay:3.3s}
+  .scanline{position:absolute;left:0;right:0;top:0;height:160px;pointer-events:none;
+    background:linear-gradient(180deg,rgba(22,214,180,0),rgba(22,214,180,.28),rgba(22,214,180,0));opacity:0}
+  .scene.on .scanline{animation:scan 3s ease-in-out 4.5s}
+  @keyframes scan{0%{opacity:0;transform:translateY(-160px)}20%{opacity:1}100%{opacity:0;transform:translateY(980px)}}
+
+  /* ===== Act1 Logo ===== */
+  .logoact{text-align:center}
+  .shield{width:200px;height:200px;margin:0 auto 18px;border-radius:48px;display:grid;place-items:center;
+    font-size:108px;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-d));
+    box-shadow:0 40px 90px rgba(14,158,142,.4);opacity:0;transform:scale(.6)}
+  .scene.on .shield{animation:pop .9s cubic-bezier(.2,.8,.2,1) .2s forwards}
+  @keyframes pop{to{opacity:1;transform:scale(1)}}
+  .logoact .name{font-size:104px;font-weight:900;letter-spacing:2px;color:var(--ink);margin-top:6px}
+  .logoact .en{color:var(--muted);font-size:28px;letter-spacing:14px;font-weight:700;margin-top:4px}
+  .logoact .slogan{font-size:56px;font-weight:900;color:var(--brand-d);margin-top:36px;
+    border-right:5px solid var(--brand);white-space:nowrap;overflow:hidden;width:0;margin-inline:auto}
+  .scene.on .logoact .slogan{animation:type 1.6s steps(8) 1s forwards, caret .7s step-end infinite}
+  @keyframes type{to{width:9.6em}}
+  @keyframes caret{50%{border-color:transparent}}
+
+  /* ===== Act2 Positioning ===== */
+  .six{display:flex;gap:46px;justify-content:center;margin-top:48px}
+  .pill{display:flex;flex-direction:column;align-items:center;gap:14px;opacity:0;transform:translateY(20px)}
+  .scene.on .pill{animation:kwin .55s forwards}
+  .scene.on .pill:nth-child(1){animation-delay:.5s}
+  .scene.on .pill:nth-child(2){animation-delay:.9s}
+  .scene.on .pill:nth-child(3){animation-delay:1.3s}
+  .scene.on .pill:nth-child(4){animation-delay:1.7s}
+  .scene.on .pill:nth-child(5){animation-delay:2.1s}
+  .scene.on .pill:nth-child(6){animation-delay:2.5s}
+  .pill .ic{width:130px;height:130px;border-radius:34px;display:grid;place-items:center;font-size:62px;
+    background:#fff;border:1px solid var(--line);box-shadow:0 16px 40px rgba(15,23,42,.08)}
+  .pill .lb{font-size:30px;font-weight:800;color:var(--ink)}
+  .pill .lb small{display:block;font-size:18px;color:var(--muted);font-weight:600;margin-top:2px}
+
+  /* ===== Act3 Module ===== */
+  .mod{display:flex;align-items:center;gap:72px;justify-content:center}
+  .mod .left{flex:0 0 auto}
+  .mod .right{flex:1;max-width:760px}
+  .mod .mnum{font-size:26px;font-weight:900;color:var(--brand);letter-spacing:4px;
+    display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .mod .mnum .ic{font-size:46px}
+  .mod h2{font-size:74px;font-weight:900;color:var(--ink);line-height:1.05}
+  .mod .msub{font-size:30px;color:var(--brand-d);font-weight:700;margin-top:8px}
+  .mod ul{list-style:none;margin-top:34px;display:flex;flex-direction:column;gap:20px}
+  .mod li{font-size:33px;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:18px;
+    opacity:0;transform:translateX(18px)}
+  .scene.on .mod li{animation:slidein .6s forwards}
+  .scene.on .mod li:nth-child(1){animation-delay:.6s}
+  .scene.on .mod li:nth-child(2){animation-delay:1.0s}
+  .scene.on .mod li:nth-child(3){animation-delay:1.4s}
+  .scene.on .mod li:nth-child(4){animation-delay:1.8s}
+  @keyframes slidein{to{opacity:1;transform:none}}
+  .mod li .dot{width:16px;height:16px;border-radius:50%;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--radar),var(--brand))}
+  .mod .api{margin-top:34px;font-size:20px;color:var(--muted);font-family:ui-monospace,Consolas,monospace;
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;display:inline-block}
+
+  /* 手机外壳 */
+  .phone{width:336px;height:728px;border-radius:48px;background:#0F172A;padding:13px;position:relative;
+    box-shadow:0 50px 100px rgba(11,110,107,.30),0 12px 30px rgba(0,0,0,.22);
+    opacity:0;transform:translateY(40px) scale(.96)}
+  .scene.on .phone{animation:phonein .9s cubic-bezier(.2,.8,.2,1) .15s forwards}
+  @keyframes phonein{to{opacity:1;transform:none}}
+  .phone .scr{width:100%;height:100%;border-radius:36px;overflow:hidden;background:#fff;position:relative}
+  .phone .scr img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:120px;height:26px;
+    background:#0F172A;border-radius:0 0 16px 16px;z-index:2}
+  .phone .glow{position:absolute;inset:-2px;border-radius:48px;pointer-events:none;
+    box-shadow:inset 0 0 0 2px rgba(22,214,180,.22)}
+
+  /* 浏览器外壳（PC 截图） */
+  .browser{width:850px;border-radius:16px;background:#0F172A;padding:0;overflow:hidden;
+    box-shadow:0 50px 100px rgba(11,110,107,.28),0 12px 30px rgba(0,0,0,.22);
+    opacity:0;transform:translateY(40px) scale(.97)}
+  .scene.on .browser{animation:phonein .9s cubic-bezier(.2,.8,.2,1) .15s forwards}
+  .browser .bbar{height:46px;display:flex;align-items:center;gap:10px;padding:0 18px;background:#111c2e}
+  .browser .bbar i{width:14px;height:14px;border-radius:50%;display:inline-block}
+  .browser .bbar .u{flex:1;margin-left:14px;height:24px;border-radius:7px;background:#1e293b}
+  .browser img{width:100%;display:block}
+
+  /* ===== Act4 Tech（深色） ===== */
+  .darkscene{background:radial-gradient(900px 600px at 30% 20%,rgba(22,214,180,.18),transparent 60%),
+    linear-gradient(135deg,#06382F,#0B1F2C)}
+  .tech{color:#fff;text-align:center}
+  .tech .mid{color:#fff}
+  .tech .kicker{color:var(--radar)}
+  .chips{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:44px;max-width:1200px}
+  .tchip{font-size:30px;font-weight:800;color:#eafff9;padding:14px 28px;border-radius:14px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(22,214,180,.35);opacity:0;transform:translateY(16px)}
+  .scene.on .tchip{animation:kwin .5s forwards}
+  .scene.on .tchip:nth-child(1){animation-delay:.4s}
+  .scene.on .tchip:nth-child(2){animation-delay:.7s}
+  .scene.on .tchip:nth-child(3){animation-delay:1.0s}
+  .scene.on .tchip:nth-child(4){animation-delay:1.3s}
+  .scene.on .tchip:nth-child(5){animation-delay:1.6s}
+  .scene.on .tchip:nth-child(6){animation-delay:1.9s}
+  .switches{display:flex;gap:40px;justify-content:center;margin-top:54px}
+  .sw{display:flex;flex-direction:column;align-items:center;gap:14px;color:#cfeee7;font-size:26px;font-weight:700}
+  .sw .track{width:150px;height:64px;border-radius:34px;background:rgba(255,255,255,.12);position:relative;
+    border:1px solid rgba(22,214,180,.4)}
+  .sw .track::after{content:"";position:absolute;top:6px;left:6px;width:52px;height:52px;border-radius:50%;
+    background:#94a3b8;transition:none}
+  .scene.on .sw .track::after{animation:flip 1.4s cubic-bezier(.2,.8,.2,1) forwards}
+  .scene.on .sw:nth-child(1) .track::after{animation-delay:2.2s}
+  .scene.on .sw:nth-child(2) .track::after{animation-delay:2.6s}
+  .scene.on .sw:nth-child(3) .track::after{animation-delay:3.0s}
+  @keyframes flip{60%{left:88px;background:var(--radar)}100%{left:88px;background:var(--radar)}}
+  .sw .st{font-size:22px;color:#7fd9c8;font-weight:700}
+
+  /* ===== Act5 Outro ===== */
+  .outro{background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff;text-align:center}
+  .outro .shield{background:rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.25)}
+  .scene.on .outro .shield{animation:pop .8s cubic-bezier(.2,.8,.2,1) .1s forwards}
+  .outro .slogan{font-size:84px;font-weight:900;margin-top:18px;opacity:0;
+    width:auto;overflow:visible;white-space:nowrap;border:none;color:#fff}
+  .scene.on .outro .slogan{animation:kwin .8s .6s forwards}
+  .outro .meta{font-size:30px;opacity:0;margin-top:30px;font-weight:600;color:#eafff9}
+  .scene.on .outro .meta{animation:kwin .8s 1.2s forwards}
+  .outro .by{font-size:40px;font-weight:900;margin-top:14px;letter-spacing:1px;opacity:0}
+  .scene.on .outro .by{animation:kwin .8s 1.6s forwards}
+  .outro .by b{color:#fff;border-bottom:3px solid rgba(255,255,255,.8);padding-bottom:2px}
+  .outro .url{font-family:ui-monospace,Consolas,monospace;font-size:24px;color:#dafff5;opacity:0;margin-top:22px}
+  .scene.on .outro .url{animation:kwin .8s 2.1s forwards}
+
+  /* 播放控制（录屏时隐藏，可按 H 隐藏/显示） */
+  #ctl{position:absolute;bottom:26px;left:46px;z-index:50;display:flex;gap:12px;align-items:center;
+    color:var(--muted);font-size:16px}
+  #ctl button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink2);
+    border-radius:8px;padding:7px 14px;font-weight:700}
+  .hideui #ctl,.hideui .brandchip,.hideui #chapter{opacity:0 !important;pointer-events:none}
+  #replay{position:absolute;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+    background:rgba(4,17,15,.55);backdrop-filter:blur(3px)}
+  #replay button{font:inherit;cursor:pointer;border:none;border-radius:14px;padding:18px 40px;font-size:26px;font-weight:800;
+    color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-d));box-shadow:0 20px 50px rgba(0,0,0,.3)}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+  <div id="bar"></div>
+  <div class="brandchip"><span class="sh">🛡️</span>坑查查</div>
+  <div id="chapter"></div>
+  <div id="sign">出品 · <b>topbat</b></div>
+
+  <!-- 场景容器：由 JS 注入 -->
+  <div id="scenes"></div>
+
+  <div id="cap"></div>
+
+  <div id="ctl">
+    <button id="pp">⏸ 暂停</button>
+    <span id="clock">00:00 / 05:00</span>
+    <span style="opacity:.7">空格 暂停 · H 隐藏界面 · R 重播</span>
+  </div>
+  <div id="replay"><button>▶ 重新播放</button></div>
+</div></div>
+
+<script>
+const TOTAL = 300; // 秒
+const A = "../docs/screenshots/";
+
+// 场景配置（at/dur 单位秒）
+const SCENES = [
+  { type:"hook", at:0, dur:22,
+    cap:'每一天，我们都在和形形色色的"坑"擦肩而过——<span class="hl">看不清、问不到、来不及</span>，往往就中了招。' },
+
+  { type:"logo", at:22, dur:26,
+    cap:'坑查查——把反诈、防坑、消费维权的常识，做成<span class="hl">可查、可测、可分享、可守护</span>。' },
+
+  { type:"positioning", at:48, dur:22,
+    cap:'遇到可疑信息，第一时间——能看、能查、能问、能测、能上报，还能<span class="hl">守护家人</span>。一套体验，手机与电脑无缝适配。' },
+
+  { type:"module", at:70, dur:24, idx:1, frame:"phone", img:"h5-feed.png",
+    icon:"📰", title:"避坑头条", sub:"智能科普信息流",
+    points:["五维标签精准筛选","语义化「为你推荐」","每 2 小时滚动更新"],
+    api:"GET /api/content/feed · /tags · /api/recommend/for-you",
+    cap:'「避坑头条」——五维筛选、智能推荐，资讯<span class="hl">每两小时滚动更新</span>，始终新鲜。' },
+
+  { type:"module", at:94, dur:30, idx:2, frame:"phone", img:"h5-toolbox.png",
+    icon:"🧰", title:"风险检测工具箱", sub:"合同 / 链接 / 截图 / 收款 · 四合一",
+    points:["合同体检 · 风险条款自动标红","链接验毒 · 截图识坑","收款核验 · 私密检测记录"],
+    api:"POST /api/toolbox/{contract,link,image,payee}",
+    cap:'核心的「风险检测工具箱」——合同条款一键体检、自动标红，<span class="hl">四合一即贴即查，秒出风险分</span>，记录全程私密。' },
+
+  { type:"module", at:124, dur:24, idx:3, frame:"phone", img:"h5-assistant.png",
+    icon:"💬", title:"AI 避坑助手", sub:"结构化作答 · 理性克制",
+    points:["风险判定 → 套路拆解","该怎么办 → 官方渠道","附 96110 / 12315 指引"],
+    api:"POST /api/assistant/chat",
+    cap:'拿不准，就问「AI 避坑助手」：判定风险、拆解套路、给出下一步与<span class="hl">官方渠道</span>。' },
+
+  { type:"module", at:148, dur:22, idx:4, frame:"phone", img:"h5-quiz.png",
+    icon:"🧭", title:"防坑能力自测", sub:"六大维度 · 防坑画像",
+    points:["心理 / 法律 / 消费","金融 / 职场 / 网络","找出你的高危场景"],
+    api:"GET /api/quiz/start · POST /api/quiz/submit",
+    cap:'「防坑自测」覆盖六大维度，测出你的<span class="hl">防坑画像与高危场景</span>。' },
+
+  { type:"module", at:170, dur:20, idx:5, frame:"phone", img:"h5-report.png",
+    icon:"✍️", title:"踩坑上报", sub:"UGC · 真实经历沉淀",
+    points:["语音说出经过","AI 自动成稿","一键上报踩坑广场"],
+    api:"GET/POST /api/ugc/stories",
+    cap:'踩过的坑也能帮到别人：语音说出经过，<span class="hl">AI 自动成稿</span>，一键上报到踩坑广场。' },
+
+  { type:"module", at:190, dur:26, idx:6, frame:"phone", img:"h5-guardian.png",
+    icon:"👵", title:"家人守护", sub:"为长辈而生",
+    points:["为家人订阅风险领域","一键扫描生成预警","大字 · 口播 · 适老化"],
+    api:"GET /api/guardian/overview · POST /push-all",
+    cap:'我们更想守护家里的长辈——订阅风险领域，一键生成<span class="hl">适老化口播预警</span>，让关心先一步抵达。' },
+
+  { type:"module", at:216, dur:18, idx:7, frame:"phone", img:"h5-me.png",
+    icon:"🏅", title:"成长与徽章", sub:"让清醒成为荣誉",
+    points:["防坑贡献值","身份等级成长","徽章墙解锁"],
+    api:"GET /api/growth/me",
+    cap:'每一次学习与上报，都会沉淀为你的<span class="hl">防坑贡献值与徽章</span>。' },
+
+  { type:"module", at:234, dur:24, idx:8, frame:"browser", img:"pc-feed.png",
+    icon:"🖥", title:"横切能力 · PC 端", sub:"海报 / 语音 / 推荐 / 桌面",
+    points:["文生图海报 · 一键转发","语音 ASR/TTS · 可听可说","向量推荐 · PC 双端响应式"],
+    api:"POST /api/share/poster · /api/voice/*",
+    cap:'一键生成科普海报、全程语音可听可说、可解释的个性化推荐，<span class="hl">PC 端同样从容</span>。' },
+
+  { type:"tech", at:258, dur:26,
+    cap:'坑查查构建在严谨的工程底座之上，<span class="hl">离线可跑，云能力一键切换</span>——稳，且可成长。' },
+
+  { type:"outro", at:284, dur:16,
+    cap:'看得清，查得到，测得准，护得住。' },
+];
+
+/* ---------- 构建 DOM ---------- */
+const root = document.getElementById("scenes");
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+function buildHook(s){
+  const w = el("div","scene"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const kws = ["定金不退","自动续费","内部原始股","注销校园贷","先交 298 押金","转到安全账户"];
+  const pad = el("div","pad");
+  const hook = el("div","hook");
+  hook.appendChild(el("div","kicker","KENG CHACHA"));
+  hook.appendChild(el("div","big",'这些"坑"，<br>你是否似曾相识？'));
+  const cloud = el("div","kw-cloud");
+  kws.forEach((k,i)=> cloud.appendChild(el("div","kw"+(i%2?" struck":""),k)));
+  hook.appendChild(cloud);
+  pad.appendChild(hook);
+  w.appendChild(el("div","scanline"));
+  w.appendChild(pad);
+  return w;
+}
+function buildLogo(s){
+  const w=el("div","scene"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const a=el("div","logoact");
+  a.appendChild(el("div","shield","🛡️"));
+  a.appendChild(el("div","name","坑查查"));
+  a.appendChild(el("div","en","K E N G  C H A C H A"));
+  a.appendChild(el("div","slogan","有坑没坑，先查查"));
+  w.appendChild(a); return w;
+}
+function buildPos(s){
+  const w=el("div","scene"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const pad=el("div","pad"); pad.style.textAlign="center";
+  pad.appendChild(el("div","kicker","ONE-STOP"));
+  pad.appendChild(el("div","mid","一站式生活防坑平台"));
+  const six=el("div","six");
+  const items=[["📰","看","资讯"],["🧰","查","风险"],["💬","问","助手"],["🧭","测","能力"],["✍️","报","经历"],["👵","护","家人"]];
+  items.forEach(([ic,a,b])=>{ const p=el("div","pill"); p.appendChild(el("div","ic",ic));
+    p.appendChild(el("div","lb",a+"<small>"+b+"</small>")); six.appendChild(p); });
+  pad.appendChild(six);
+  pad.appendChild(el("div","lede","一套产品 · 手机与电脑，体验如一"));
+  w.appendChild(pad); return w;
+}
+function buildModule(s){
+  const w=el("div","scene"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const mod=el("div","mod pad");
+  const left=el("div","left");
+  if(s.frame==="phone"){
+    const ph=el("div","phone");
+    ph.appendChild(el("div","notch"));
+    const scr=el("div","scr"); const img=el("img"); img.src=A+s.img; img.alt=s.title; scr.appendChild(img);
+    ph.appendChild(scr); ph.appendChild(el("div","glow"));
+    left.appendChild(ph);
+  }else{
+    const br=el("div","browser");
+    const bbar=el("div","bbar");
+    bbar.innerHTML='<i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="u"></span>';
+    br.appendChild(bbar);
+    const img=el("img"); img.src=A+s.img; img.alt=s.title; br.appendChild(img);
+    left.appendChild(br);
+  }
+  const right=el("div","right");
+  right.appendChild(el("div","mnum",'<span class="ic">'+s.icon+'</span>'+String(s.idx).padStart(2,"0")+" / 08"));
+  right.appendChild(el("h2",null,s.title));
+  right.appendChild(el("div","msub",s.sub));
+  const ul=el("ul"); s.points.forEach(p=> ul.appendChild(el("li",null,'<span class="dot"></span>'+p)));
+  right.appendChild(ul);
+  right.appendChild(el("div","api",s.api));
+  mod.appendChild(left); mod.appendChild(right);
+  w.appendChild(mod); return w;
+}
+function buildTech(s){
+  const w=el("div","scene darkscene"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const pad=el("div","pad tech"); pad.style.textAlign="center";
+  pad.appendChild(el("div","kicker","ENGINEERED TO LAST"));
+  pad.appendChild(el("div","mid","严谨的工程底座"));
+  const chips=el("div","chips");
+  ["Java 21 · 虚拟线程","Spring Boot 3.2","模块化单体","React 18 + Vite","双端响应式","接口隔离 · 可插拔"]
+    .forEach(c=> chips.appendChild(el("div","tchip",c)));
+  pad.appendChild(chips);
+  const sws=el("div","switches");
+  [["大模型","mock → 云 LLM"],["向量化","mock → BGE/M3E"],["语音","mock → 讯飞/阿里云"]].forEach(([a,b])=>{
+    const sw=el("div","sw"); sw.appendChild(el("div",null,a));
+    sw.appendChild(el("div","track")); sw.appendChild(el("div","st",b)); sws.appendChild(sw);
+  });
+  pad.appendChild(sws);
+  w.appendChild(pad); return w;
+}
+function buildOutro(s){
+  const w=el("div","scene outro"); w.dataset.at=s.at; w.dataset.dur=s.dur;
+  const a=el("div","logoact outro");
+  a.appendChild(el("div","shield","🛡️"));
+  a.appendChild(el("div","slogan","有坑没坑，先查查"));
+  a.appendChild(el("div","meta","坑查查 v1.0 · 生活防坑与常识科普平台"));
+  a.appendChild(el("div","by",'出品：<b>topbat</b>'));
+  a.appendChild(el("div","url","github.com/topbat/kengchacha-app"));
+  w.appendChild(a); return w;
+}
+const builders={hook:buildHook,logo:buildLogo,positioning:buildPos,module:buildModule,tech:buildTech,outro:buildOutro};
+const nodes = SCENES.map(s=>{ const n=builders[s.type](s); root.appendChild(n); return n; });
+
+// 录制模式：?clean 隐藏播放控件（保留品牌角标/章节，画面更干净）
+if(/clean/.test(location.search)){ const c=document.getElementById("ctl"); if(c) c.style.display="none"; }
+
+/* ---------- 缩放舞台 ---------- */
+function fit(){ const s=Math.min(innerWidth/1920, innerHeight/1080);
+  document.getElementById("stage").style.transform="scale("+s+")"; }
+addEventListener("resize",fit); fit();
+
+/* ---------- 时间轴引擎 ---------- */
+const bar=document.getElementById("bar"), cap=document.getElementById("cap"),
+      chapter=document.getElementById("chapter"), clock=document.getElementById("clock"),
+      replay=document.getElementById("replay"), pp=document.getElementById("pp");
+let startT=null, paused=false, pauseAcc=0, pauseStart=0, cur=-1, finished=false;
+
+function fmt(t){ t=Math.max(0,Math.floor(t)); return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0"); }
+
+function setScene(i){
+  if(i===cur) return;
+  cur=i;
+  nodes.forEach((n,k)=> n.classList.toggle("on", k===i));
+  const s=SCENES[i];
+  // 字幕
+  cap.classList.remove("on");
+  setTimeout(()=>{ cap.innerHTML=s.cap||""; cap.classList.add("on"); }, 220);
+  // 章节角标
+  if(s.type==="module"){ chapter.style.opacity=1; chapter.textContent="MODULE "+String(s.idx).padStart(2,"0")+" / 08"; }
+  else chapter.style.opacity=0;
+}
+
+function frame(now){
+  if(startT===null) startT=now;
+  if(paused){ requestAnimationFrame(frame); return; }
+  const t=(now-startT-pauseAcc)/1000;
+  bar.style.width=Math.min(100,(t/TOTAL)*100)+"%";
+  clock.textContent=fmt(t)+" / 05:00";
+  // 找当前场景
+  let idx=0;
+  for(let i=0;i<SCENES.length;i++){ if(t>=SCENES[i].at) idx=i; }
+  setScene(idx);
+  if(t>=TOTAL){ if(!finished){ finished=true; replay.style.display="flex"; } return; }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ---------- 控制 ---------- */
+function togglePause(){ paused=!paused; if(paused){pauseStart=performance.now(); pp.textContent="▶ 播放";}
+  else{ pauseAcc+=performance.now()-pauseStart; pp.textContent="⏸ 暂停"; requestAnimationFrame(frame);} }
+function doReplay(){ startT=null; pauseAcc=0; paused=false; cur=-1; finished=false;
+  replay.style.display="none"; pp.textContent="⏸ 暂停"; requestAnimationFrame(frame); }
+pp.onclick=togglePause;
+replay.querySelector("button").onclick=doReplay;
+addEventListener("keydown",e=>{
+  if(e.code==="Space"){ e.preventDefault(); togglePause(); }
+  if(e.key.toLowerCase()==="h"){ document.body.classList.toggle("hideui"); }
+  if(e.key.toLowerCase()==="r"){ doReplay(); }
+});
+</script>
+</body>
+</html>
